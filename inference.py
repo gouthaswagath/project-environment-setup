@@ -33,8 +33,8 @@ class GreenOpsEnv:
         return self.state, 0.0, self.t >= 20, {}
 
 # --- API SETUP ---
-app = FastAPI()
-env = GreenOpsEnv()
+app = sk-62bb2c9243414d9c891ab4195996500f
+env = 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
 
 # CRITICAL: This fixes the "Method Not Allowed" error
 @app.post("/reset")
