@@ -1,11 +1,8 @@
 import numpy as np
-import gradio as gr
 from fastapi import FastAPI
 import uvicorn
 from pydantic import BaseModel
-from typing import Tuple
 
-# --- MODELS ---
 class State(BaseModel):
     load: float
     latency: float
@@ -16,7 +13,6 @@ class State(BaseModel):
 class ActionRequest(BaseModel):
     action: int
 
-# --- ENVIRONMENT ---
 class GreenOpsEnv:
     def __init__(self):
         self.reset()
@@ -44,34 +40,21 @@ class GreenOpsEnv:
 
         return self.state, reward, done, {}
 
-# --- APP ---
 app = FastAPI()
 env = GreenOpsEnv()
 
-# ✅ RESET
 @app.post("/reset")
 def reset():
-    state = env.reset()
-    return {"state": state.dict()}
+    return {"state": env.reset().dict()}
 
-# ✅ STEP
 @app.post("/step")
 def step(req: ActionRequest):
     state, reward, done, _ = env.step(req.action)
     return {"state": state.dict(), "reward": reward, "done": done}
 
-# ✅ STATE
 @app.get("/state")
 def state():
     return {"state": env.state.dict()}
 
-# --- GRADIO ---
-with gr.Blocks() as demo:
-    gr.Markdown("# 🌿 GreenOps API Running")
-
-# ✅ FIXED PATH
-app = gr.mount_gradio_app(app, demo, path="/ui")
-
-# --- RUN ---
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=7860)
